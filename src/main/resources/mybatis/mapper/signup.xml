@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.himedia.mc.signupDAO">
+	
+	<insert id="getMember">
+	insert into member set userid=#{param1}, passwd=#{param2}, realname=#{param3}, birthday=#{param4}, gender=#{param5}, mobile=#{param6}, favorite=#{param7} 
+	</insert>
+	<select id="logMember" resultType="_int">
+	select count(*)from member where userid=#{param1} and passwd=#{param2}
+	</select>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.himedia.mc.commentDAO">
+	<insert id="insert">
+		insert into reply set par_id=(select id from board where id=#{param1}) , content=#{param2} , writer=(select id from member where userid=#{param3})
+ 	</insert>
+ 	<select id ="getView" resultType="com.himedia.mc.commentDTO">
+ 		SELECT DISTINCT a.content, b.userid, a.created 
+FROM reply a
+JOIN member b ON a.writer = b.id
+JOIN board c ON a.par_id = c.id
+WHERE c.id = #{param1}
+ 	
+ 	</select>
+</mapper>

@@ -32,19 +32,20 @@ td{
 </td></tr>
 </table>
 <table>
-	<tr><td colspan=2 style='text-align:center'>의견<input type=hidden name="boardId" value="${sessionScope.userid}" id="userid"><input type=text id="writer"></td></tr>
+	<tr><td colspan=2 style='text-align:center'>의견<input type=hidden name="boardId" value="${sessionScope.userid}" id="userid"><input type=hidden id="writer"><input type =text id="id"><input type =text id="created"></td></tr>
 	<tr><td colspan=2 ><textarea style="width:450px; height:100px;" id=comment name=comment></textarea></td></tr>
-	<tr><td colspan=2><input type = button id="reply" value="댓글달기"><input type = button id="delete" value="댓글삭제"></td></tr>
+	<tr><td colspan=2><input type = button id="reply" value="댓글달기/수정"><input type = button id="delete" value="댓글삭제" id ="delete"></td></tr>
 </table>
 <table id=tbl>
 	<thead>
-		<tr><th>댓글 작성자</th><th>내용</th><th>작성시간</th>
+		<tr><th style="display: none;"></th><th>댓글 작성자</th><th>내용</th><th>작성시간</th>
 	</thead>
 	<tbody></tbody>
 </table>
 
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script>
+let near='';
 $(document)
 .ready(function(){
 		loadView()
@@ -56,26 +57,101 @@ $(document)
 	console.log("[id]",id);
 	console.log("[comment]",comment);
 	console.log("[writer]",writer);
+		let commentid =$('#id').val();
+	
+	if('#id'==''){
 
         $.ajax({ url:"/comment" , type:"post" , data:{id: id,comment: comment, writer: writer}, dataType:"text",
         success:function(data){
         	console.log(data)
+        	loadView();
 
         }
         })
-    })
-.on('click','#tbl tbody tr',function(){
-
-	let writer = $(this).find('td:eq(0)').text();
-	let content = $(this).find('td:eq(1)').text();
-	
-	if($('#writer').val()!='${sessionScope.userid}'){
-		alert('작성자가 아닙니다')
-		$('#comment').prop('readonly', true);
+        
 	}else{
-		$('#writer').val(writer);
-		$('#comment').val(content);
+		if($('#writer').val()!='${sessionScope.userid}'){
+			alert('작성자가 아닙니다')
+			$('#comment').prop('readonly', true);
+			return false;
+		}
+		$.ajax({
+			url:"/commentupdate",type:"post",data:{id:commentid,comment:comment},dataType:"text",
+			success:function(data){
+				console.log(data)
+				loadView();
+			}
+		})
+		
 	}
+		
+    })
+.on('click','#delete',function(){
+	let id = $('#id').val();
+	
+	$.ajax({
+			url:"/commentdelete" , type:"post" , data:{id:id},dataType:"text",
+			success:function(data){
+				console.log(data)
+				loadView();
+			}
+		
+	})
+	
+})
+.on('click','#tbl tbody tr',function(){
+	let id = $(this).find('td:eq(0)').text();
+	let writer = $(this).find('td:eq(1)').text();
+	let content = $(this).find('td:eq(2)').text();
+	let created = $(this).find('td:eq(3)').text();
+	console.log("id",id)
+	console.log("writer",writer);
+	console.log("content",content);
+	$('#id').val(id);
+	$('#writer').val(writer);
+	$('#comment').val(content);
+	$('#created').val(created);
+	near=$(this).closest('tr');
+	//let str='<tr><td colspan=3><input type= button value="대댓글 등록" id="put"></td></tr>';
+    //$('#tbl tbody').append(str);
+    
+    if($('#put').length==0){
+	$('#tbl tbody').after('<input type= button value="대댓글 등록" id="put"><input type=hidden id="eid">')
+    $('#eid').val($('#id').val());
+    
+    }else{
+    $(this).prop('disabled', true);
+    }
+})
+.on('click','#put',function(){
+	let str='<tr><td colspan=2><textarea style="width:450px; height:100px;" id="replycomment"></textarea></td><td><input type =button value="등록" id="putreply"><input type=button value="삭제" id="deletereply"></td></tr>';
+    near.after(str);
+	
+})
+.on('click','#putreply',function(){
+	let val= $('#replycomment').val(); 
+	$.ajax({
+		url:"/putreply",type:"post",data:{id:$('#eid').val(),content:val,userid:$('#userid').val()},dataType:"text",
+		success:function(data){
+			console.log(data);
+			$.ajax({
+				url:"/getView1" ,type:"post",data:{id:$('#eid').val()},dataType:"json",
+				success:function(data){
+					console.log(data);
+	    			let str1 = "";
+	    			for( let x of data){
+	    			str1 += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
+	    			
+	    			}near.after(str1);
+	    			loadView();
+	    			
+		}
+		}
+	})
+			
+		}
+		
+	})
 	
 })
     function loadView(){
@@ -87,12 +163,23 @@ $(document)
     			$('#tbl tbody').empty();
     			let str = "";
     			for( let x of data){
-    			str += '<tr><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
+    			str += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
     			
     			}$('#tbl tbody').append(str);
+    			$.ajax({
+    				url:"/getView1" ,type:"post",data:{id:$('#eid').val()},dataType:"json",
+    				success:function(data){
+    					console.log(data);
+    	    			let str1 = "";
+    	    			for( let x of data){
+    	    			str1 += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
+    	    			
+    	    			}near.after(str1);
     		}
     	})
     }
+    	})
+}
 </script>
 </body>
 

@@ -267,6 +267,23 @@ public class HomeController {
 		commentdao.insert(id,content , writer);
 		return "board/view";
 	}
+	@PostMapping("/commentupdate")
+	@ResponseBody
+	public String commentupdate(HttpServletRequest req, Model model) {
+		int id= Integer.parseInt(req.getParameter("id"));
+		String content = req.getParameter("comment");
+		
+		commentdao.update(id,content);
+		return "board/view";
+	}
+	@PostMapping("/commentdelete")
+	@ResponseBody
+	public String commentdelete(HttpServletRequest req, Model model) {
+		int id= Integer.parseInt(req.getParameter("id"));
+			
+		commentdao.delete(id);
+		return "board/view";
+	}
 	@PostMapping("/getView")
 	@ResponseBody
 	public String selecttype(HttpServletRequest req, Model model) {
@@ -289,6 +306,41 @@ public class HomeController {
 	}
 		return ja.toString();
 	}
-
+	@PostMapping("/putreply")
+	@ResponseBody
+	public String putreply(HttpServletRequest req, Model model) {
+		
+		int par_id= Integer.parseInt(req.getParameter("id"));//아이디 뽑아오는거
+		String content = req.getParameter("content");
+		String userid = req.getParameter("userid");
+		System.out.println("par_id"+par_id);
+		System.out.println("content"+content);
+		System.out.println("writer"+userid);
+		commentdao.insert1(par_id,content,userid);
+		return "board/view";
+	}
+	@PostMapping("/getView1")
+	@ResponseBody
+	public String getView1(HttpServletRequest req, Model model) {
+		
+		int id= Integer.parseInt(req.getParameter("id"));
+		System.out.println("id1"+id);
+		ArrayList<commentDTO> ar = commentdao.getView1(id);
+	
+		JSONArray ja = new JSONArray();
+		for(commentDTO cdto : ar) {
+			JSONObject jo =new JSONObject();
+			jo.put("id",cdto.getId());
+			jo.put("par_id",cdto.getPar_id());
+			jo.put("content",cdto.getContent());
+			jo.put("writer",cdto.getUserid());
+			jo.put("created",cdto.getCreated());
+			jo.put("updated",cdto.getUpdated());
+			
+			ja.put(jo);
+			
+	}
+		return ja.toString();
+	}
 }
 

@@ -5,11 +5,31 @@
 		insert into reply set par_id=(select id from board where id=#{param1}) , content=#{param2} , writer=(select id from member where userid=#{param3})
  	</insert>
  	<select id ="getView" resultType="com.himedia.mc.commentDTO">
- 		SELECT DISTINCT a.content, b.userid, a.created 
+ 		SELECT DISTINCT a.id,a.content, b.userid, a.created 
 FROM reply a
 JOIN member b ON a.writer = b.id
 JOIN board c ON a.par_id = c.id
 WHERE c.id = #{param1}
+ order by a.created desc
+ 	</select>
+ 	<update id ="update">
+ 		update reply set content=#{param2} where id=#{param1}
+ 	</update>
+ 	<delete id="delete">
+ 		delete from reply where id=#{param1}
+ 	</delete>
  	
+ 	<select id="readreply">
+ 		select id,content,writer,created from reply
+ 	
+ 	</select>
+ 	<insert id="insert1">
+ 		insert into reply set content=#{param2} , par_id=#{param1},writer=(select id from member where userid=#{param3})
+ 	</insert>
+ 	<select id="getView1">
+ 		select distinct a.content, b.userid,a.created
+		from reply a,member b
+		where  a.writer = b.id and a.par_id=#{param1}
+		order by a.created desc
  	</select>
 </mapper>

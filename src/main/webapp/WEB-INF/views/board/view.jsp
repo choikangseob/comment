@@ -143,9 +143,9 @@ $(document)
 	    			str1 += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
 	    			
 	    			}near.after(str1);
-	    			loadView();
 	    			
-		}
+	    			
+		
 		}
 	})
 			

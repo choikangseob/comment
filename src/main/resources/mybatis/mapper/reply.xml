@@ -27,9 +27,9 @@ WHERE c.id = #{param1}
  		insert into reply set content=#{param2} , par_id=#{param1},writer=(select id from member where userid=#{param3})
  	</insert>
  	<select id="getView1">
- 		select distinct a.content, b.userid,a.created
+ 		select distinct a.id,a.content, b.userid,a.created
 		from reply a,member b
-		where  a.writer = b.id and a.par_id=#{param1}
+		where  a.writer = b.id and a.par_id =#{param1}
 		order by a.created desc
  	</select>
 </mapper>

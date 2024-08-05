@@ -337,8 +337,7 @@ public class HomeController {
 			jo.put("created",cdto.getCreated());
 			jo.put("updated",cdto.getUpdated());
 
-			ja.put(jo);
-			
+			ja.put(jo);			
 	}
 		return ja.toString();
 	}

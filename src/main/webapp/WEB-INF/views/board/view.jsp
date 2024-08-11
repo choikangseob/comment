@@ -108,13 +108,35 @@ $(document)
 	console.log("writer",writer);
 	console.log("content",content);
 	$('#id').val(id);
+	$('#eeid').val(id);				//대댓글 아이디
+	$('#replycomment').val(content); // 대댓글 내용
 	$('#writer').val(writer);
 	$('#comment').val(content);
 	$('#created').val(created);
 	near=$(this).closest('tr');
 	//let str='<tr><td colspan=3><input type= button value="대댓글 등록" id="put"></td></tr>';
     //$('#tbl tbody').append(str);
-    
+    			let putreplyButton=this;
+    			$.ajax({
+    				url:"/getView1" ,type:"post",data:{id:$('#eid').val()},dataType:"json",
+    				success:function(data){
+    					console.log(data);
+    					$(putreplyButton).closest('tr').after('<table id="tbl10"></table>');
+    					$('#tbl10').empty();
+    	    			let str1 = "";
+    	    			for( let x of data){
+    	    			str1 += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
+
+    	    			}
+    	    			//near.after(str1);
+    	    			$('#tbl10').append(str1);
+
+
+
+    		}
+    	})
+
+
     if($('#put').length==0){
 	$('#tbl tbody').after('<input type= button value="대댓글 등록" id="put"><input type=hidden id="eid">')
     $('#eid').val($('#id').val());
@@ -123,30 +145,56 @@ $(document)
     $(this).prop('disabled', true);
     }
 })
+.on('click','#tbl10 tr',function(){
+	let id = $(this).find('td:eq(0)').text();
+	let writer = $(this).find('td:eq(1)').text();
+	let content = $(this).find('td:eq(2)').text();
+	let created = $(this).find('td:eq(3)').text();
+	console.log("id::",id)
+	console.log("writer::",writer);
+	console.log("content::",content);
+	$('#id').val(id);
+	$('#eeid').val(id);				//대댓글 아이디
+	$('#replycomment').val(content); // 대댓글 내용
+	$('#writer').val(writer);
+	$('#comment').val(content);
+	$('#created').val(created);
+})
 .on('click','#put',function(){
-	let str='<tr><td colspan=2><textarea style="width:450px; height:100px;" id="replycomment"></textarea></td><td><input type =button value="등록" id="putreply"><input type=button value="삭제" id="deletereply"></td></tr>';
+	let str='<tr><td colspan=2><textarea style="width:450px; height:100px;" id="replycomment"></textarea></td><td><input type=hidden id="eeid"><input type =button value="등록" id="putreply"><input type=button value="수정" id="update10"><input type=button value="삭제" id="deletereply"></td></tr>';
     near.after(str);
 	
 })
 .on('click','#putreply',function(){
-	let val= $('#replycomment').val(); 
-	  let putreplyButton = this;
+	let val= $('#replycomment').val();
+	let putreplyButton = this;
 	$.ajax({
 		url:"/putreply",type:"post",data:{id:$('#eid').val(),content:val,userid:$('#userid').val()},dataType:"text",
 		success:function(data){
 			console.log(data);
+
 			$.ajax({
 				url:"/getView1" ,type:"post",data:{id:$('#eid').val()},dataType:"json",
 				success:function(data){
 					console.log(data);
+					$(putreplyButton).closest('tr').after('<table id="tbl10"></table>');
+					$('#tbl10').empty();
 	    			let str1 = "";
 	    			for( let x of data){
 	    			str1 += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
 	    			
+<<<<<<< HEAD
+	    			}
+	    			//near.after(str1);
+	    			$('#tbl10').append(str1);
+	    			putreplyButton.closest('tr').remove();
+
+=======
 	    			}near.after(str1);
 	    			 putreplyButton.closest('tr').remove();
 	    			
-		
+>>>>>>> refs/remotes/origin/master
+
 		}
 	})
 			
@@ -154,6 +202,30 @@ $(document)
 		
 	})
 	
+})
+.on('click','#update10',function(){
+	$.ajax({
+		url:"/commentupdate",type:"post",data:{id:$('#eeid').val(),comment:$('#replycomment').val()},dataType:"text",
+		success:function(data){
+			console.log(data)
+			loadView();
+		}
+	})
+
+})
+.on('click','#deletereply',function(){
+	let id = $('#eeid').val();
+	let allRows = $('#tbl10 tr');
+	$.ajax({
+		url:"/commentdelete" , type:"post" , data:{id:id},dataType:"text",
+		success:function(data){
+
+
+			console.log(data)
+			loadView();
+		}
+
+})
 })
     function loadView(){
     	let id = "${board.id}";
@@ -167,17 +239,26 @@ $(document)
     			str += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
     			
     			}$('#tbl tbody').append(str);
+    			let putreplyButton=this;
     			$.ajax({
     				url:"/getView1" ,type:"post",data:{id:$('#eid').val()},dataType:"json",
     				success:function(data){
     					console.log(data);
+    					$(putreplyButton).closest('tr').after('<table id="tbl10"></table>');
+    					$('#tbl10').empty();
     	    			let str1 = "";
     	    			for( let x of data){
     	    			str1 += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
     	    			
-    	    			}near.after(str1);
+    	    			}
+    	    			//near.after(str1);
+    	    			$('#tbl10').append(str1);
+
+
+
     		}
     	})
+
     }
     	})
 }

@@ -324,7 +324,7 @@ public class HomeController {
 	public String getView1(HttpServletRequest req, Model model) {
 		
 		int id= Integer.parseInt(req.getParameter("id"));
-		System.out.println("id1"+id);
+		System.out.println("id1:"+id);
 		ArrayList<commentDTO> ar = commentdao.getView1(id);
 	
 		JSONArray ja = new JSONArray();
@@ -336,9 +336,8 @@ public class HomeController {
 			jo.put("writer",cdto.getUserid());
 			jo.put("created",cdto.getCreated());
 			jo.put("updated",cdto.getUpdated());
-			
-			ja.put(jo);
-			
+
+			ja.put(jo);			
 	}
 		return ja.toString();
 	}

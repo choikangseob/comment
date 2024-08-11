@@ -130,6 +130,7 @@ $(document)
 })
 .on('click','#putreply',function(){
 	let val= $('#replycomment').val(); 
+	  let putreplyButton = this;
 	$.ajax({
 		url:"/putreply",type:"post",data:{id:$('#eid').val(),content:val,userid:$('#userid').val()},dataType:"text",
 		success:function(data){
@@ -143,7 +144,7 @@ $(document)
 	    			str1 += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
 	    			
 	    			}near.after(str1);
-	    			
+	    			 putreplyButton.closest('tr').remove();
 	    			
 		
 		}

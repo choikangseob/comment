@@ -182,18 +182,15 @@ $(document)
 	    			let str1 = "";
 	    			for( let x of data){
 	    			str1 += '<tr><td style="display: none;">'+x['id']+'</td><td>'+x['writer']+'</td><td>'+x['content']+'</td><td>'+x['created']+'</td></tr>'
-	    			
-<<<<<<< HEAD
+
 	    			}
 	    			//near.after(str1);
 	    			$('#tbl10').append(str1);
 	    			putreplyButton.closest('tr').remove();
 
-=======
 	    			}near.after(str1);
 	    			 putreplyButton.closest('tr').remove();
 	    			
->>>>>>> refs/remotes/origin/master
 
 		}
 	})
@@ -256,9 +253,9 @@ $(document)
 
 
 
+
     		}
     	})
-
     }
     	})
 }

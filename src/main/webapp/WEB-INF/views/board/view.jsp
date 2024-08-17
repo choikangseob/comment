@@ -84,6 +84,7 @@ $(document)
 		})
 		
 	}
+
 		
     })
 .on('click','#delete',function(){
@@ -159,9 +160,22 @@ $(document)
 	$('#writer').val(writer);
 	$('#comment').val(content);
 	$('#created').val(created);
+	
+	$('#update10').remove();
+	$('#deletereply').remove();
+	$('#putreply').after('<input type = button value="수정" id="update10"><input type = button value="삭제" id="deletereply">');
+	console.log(this);
+	console.log($(this).closest('td'));
+	console.log($(this).closest('td').find('#update10'))
+	
+
+
+
+	
+	
 })
 .on('click','#put',function(){
-	let str='<tr><td colspan=2><textarea style="width:450px; height:100px;" id="replycomment"></textarea></td><td><input type=hidden id="eeid"><input type =button value="등록" id="putreply"><input type=button value="수정" id="update10"><input type=button value="삭제" id="deletereply"></td></tr>';
+	let str='<tr><td colspan=2><textarea style="width:450px; height:100px;" id="replycomment"></textarea></td><td><input type=hidden id="eeid"><input type =button value="등록" id="putreply"></td></tr>';
     near.after(str);
 	
 })
@@ -188,8 +202,7 @@ $(document)
 	    			$('#tbl10').append(str1);
 	    			putreplyButton.closest('tr').remove();
 
-	    			}near.after(str1);
-	    			 putreplyButton.closest('tr').remove();
+	    			
 	    			
 
 		}
